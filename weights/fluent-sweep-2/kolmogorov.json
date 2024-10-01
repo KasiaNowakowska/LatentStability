@@ -1,0 +1,13 @@
+{
+    "upsample": 10,
+    "L": 22,
+    "N_data": 40000,
+    "N_trans": 1000,
+    "dt": 0.005,
+    "Nx": 512,
+    "Nu": 1,
+    "train_ratio": 0.8,
+    "valid_ratio": 0.1,
+    "b_size": 128,
+    "normtype": "max"
+}
