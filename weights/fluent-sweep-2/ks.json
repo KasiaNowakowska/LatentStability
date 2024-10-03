@@ -9,5 +9,5 @@
     "valid_ratio": 0.1,
     "batchsize": 128,
     "normtype": "max",
-    "lyap": 0.08
+    "lyap": 0.04
 }
