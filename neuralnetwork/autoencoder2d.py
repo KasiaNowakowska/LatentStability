@@ -14,20 +14,20 @@ class CAE(nn.Module):
         self.encoder = nn.Sequential(
             OrderedDict(
                 [
-                    ("enc_conv0", nn.Conv1d(in_channels=1, out_channels=2, kernel_size=8, stride=2)), # (B, 1, 256) -> (B, 2, 128)
+                    ("enc_conv0", nn.Conv2d(in_channels=4, out_channels=16, kernel_size=8, stride=2)),
                     ("tanh0", nn.Tanh()),
-                    ("enc_conv1", nn.Conv1d(in_channels=2, out_channels=4, kernel_size=8, stride=2)), # (B, 2, 128) -> (B, 2, 128)
+                    ("enc_conv1", nn.Conv2d(in_channels=16, out_channels=32, kernel_size=8, stride=2)),
                     ("tanh1", nn.Tanh()),
-                    ("enc_conv2", nn.Conv1d(in_channels=4, out_channels=8, kernel_size=5, stride=2)),
+                    ("enc_conv2", nn.Conv2d(in_channels=32, out_channels=64, kernel_size=5, stride=2)),
                     ("tanh2", nn.Tanh()),
-                    ("enc_conv3", nn.Conv1d(in_channels=8, out_channels=16, kernel_size=5, stride=3)),
+                    ("enc_conv3", nn.Conv2d(in_channels=64, out_channels=128, kernel_size=5, stride=3)),
                     ("tanh3", nn.Tanh()),
-                    ("enc_conv4", nn.Conv1d(in_channels=16, out_channels=32, kernel_size=3, stride=3)),
+                    ("enc_conv4", nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=3)),
                     ("tanh4", nn.Tanh()),
-                    # ("enc_conv5", nn.Conv1d(in_channels=32, out_channels=64, kernel_size=3, stride=3)),
-                    # ("tanh5", nn.Tanh()),
+                    ("enc_conv5", nn.Conv2d(in_channels=256, out_channels=512, kernel_size=3, stride=3)),
+                    ("tanh5", nn.Tanh()),
                     ("enc_flat", nn.Flatten()),
-                    ("enc_linear_dense", nn.Linear(in_features=(64), out_features=self.latent_size)),
+                    ("enc_linear_dense", nn.Linear(in_features=(128), out_features=self.latent_size)),
                     ("tanh_lin", nn.Tanh()),
                 ]
             )
@@ -36,33 +36,39 @@ class CAE(nn.Module):
         self.decoder = nn.Sequential(
             OrderedDict(
                 [
-                    ("dec_linear_dense", nn.Linear(in_features=self.latent_size, out_features=(64))),
+                    ("dec_linear_dense", nn.Linear(in_features=self.latent_size, out_features=(128))),
                     ("dec_tanh_dense", nn.Tanh()),
-                    ("dec_unflat", nn.Unflatten(1, (32, 2))),
-                    ("dec_tconv1", nn.ConvTranspose1d(in_channels=32, out_channels=16, kernel_size=3, stride=3)),
+                    ("dec_unflat", nn.Unflatten(1, (64, 2))),
+                    ("dec_tconv1", nn.ConvTranspose1d(in_channels=64, out_channels=32, kernel_size=3, stride=3)),
                     (
                         "dec_tconv1_2",
-                        nn.ConvTranspose1d(in_channels=16, out_channels=16, kernel_size=3, stride=1),
+                        nn.ConvTranspose1d(in_channels=32, out_channels=32, kernel_size=3, stride=1, padding=0),
                     ),
                     ("dec_tanh1", nn.Tanh()),
-                    ("dec_tconv2", nn.ConvTranspose1d(in_channels=16, out_channels=8, kernel_size=5, stride=3)),
+                    ("dec_tconv2", nn.ConvTranspose1d(in_channels=32, out_channels=16, kernel_size=5, stride=3)),
                     (
                         "dec_tconv2_2",
-                        nn.ConvTranspose1d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=1),
+                        nn.ConvTranspose1d(in_channels=16, out_channels=16, kernel_size=3, stride=1, padding=1),
                     ),
                     ("dec_tanh2", nn.Tanh()),
-                    ("dec_tconv3", nn.ConvTranspose1d(in_channels=8, out_channels=4, kernel_size=6, stride=3)),
+                    ("dec_tconv3", nn.ConvTranspose1d(in_channels=16, out_channels=8, kernel_size=5, stride=3)),
                     (
                         "dec_tconv3_2",
-                        nn.ConvTranspose1d(in_channels=4, out_channels=4, kernel_size=3, stride=1, padding=0),
+                        nn.ConvTranspose1d(in_channels=8, out_channels=8, kernel_size=3, stride=1, padding=0),
                     ),
                     ("dec_tanh3", nn.Tanh()),
-                    ("dec_tconv4", nn.ConvTranspose1d(in_channels=4, out_channels=2, kernel_size=8, stride=3)),
+                    ("dec_tconv4", nn.ConvTranspose1d(in_channels=8, out_channels=4, kernel_size=8, stride=3)),
                     (
                         "dec_tconv4_2",
-                        nn.ConvTranspose1d(in_channels=2, out_channels=1, kernel_size=3, stride=1, padding=0),
+                        nn.ConvTranspose1d(in_channels=4, out_channels=4, kernel_size=3, stride=1, padding=0),
                     ),
                     ("dec_tanh4", nn.Tanh()),
+                    ("dec_tconv5", nn.ConvTranspose1d(in_channels=4, out_channels=2, kernel_size=8, stride=2)),
+                    (
+                        "dec_tconv5_2",
+                        nn.ConvTranspose1d(in_channels=2, out_channels=1, kernel_size=3, stride=1, padding=1),
+                    ),
+                    ("dec_tanh5", nn.Tanh()),
                 ]
             )
         )

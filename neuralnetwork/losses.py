@@ -99,6 +99,26 @@ class LossTracker:
         else:
             plt.show()
 
+    def create_loss_plot2(self, modelpath=None):
+        fig, ax = plt.subplots(1, figsize=(8,6))
+        loss_type = "training"
+        ax.plot(self.losses_dict[f"{loss_type}_loss"], label=f"{loss_type}")
+        loss_type = "validation"
+        ax.plot(self.losses_dict[f"{loss_type}_loss"], label=f"{loss_type}")
+
+        ax.set_xlabel("Epochs")
+        ax.set_yscale("log")
+        ax.set_ylabel("MSE_Loss")
+        ax.grid()
+        ax.legend()
+
+        fig.tight_layout()
+        if modelpath is not None:
+            fig.savefig(modelpath / "Loss_Plot.png", dpi=100)
+            plt.close()
+        else:
+            plt.show()
+
     def save_losses(self, path):
         path.mkdir(parents=True, exist_ok=True)
         np.save(path / "losses.npy", self.losses_dict)
